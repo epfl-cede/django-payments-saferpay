@@ -7,4 +7,6 @@
 coverage.xml
 dist/
 env/
+.env
+.python-version
 sandbox/db.sqlite3
