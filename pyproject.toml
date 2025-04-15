@@ -1,0 +1,64 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "django-payments-saferpay"
+description = "SaferPay integration for django-payments"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+keywords = ["django", "payments", "saferpay"]
+authors = [
+  { name = "EPFL CEDE", email = "oleg.demakov@epfl.ch" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: Django",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: Implementation :: CPython",
+  "Programming Language :: Python :: Implementation :: PyPy",
+]
+
+dependencies = [
+  "django-payments",
+]
+
+[project.optional-dependencies]
+dev = [
+  "flit",
+]
+test = [
+  "pytest",
+  "pytest-cov",
+  "pytest-django",
+  "pytest-mock",
+  "dj_database_url",
+  "factory_boy",
+]
+
+[project.urls]
+Documentation = "https://github.com/epfl-cede/django-payments-saferpay#readme"
+Issues = "https://github.com/epfl-cede/django-payments-saferpay/issues"
+Source = "https://github.com/epfl-cede/django-payments-saferpay"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.django_settings"
+addopts = "--cov=saferpay/ --cov-branch --cov-report=term-missing --cov-report=xml"
+
+[tool.isort]
+profile = "black"
+src_paths = ["saferpay", "tests"]
+
+[tool.mypy]
+strict = true
+
+[[tool.mypy.overrides]]
+# Parts of django-payments are typed, but no py.typed marker
+module = "payments.*"
+ignore_missing_imports = true

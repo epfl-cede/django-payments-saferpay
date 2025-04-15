@@ -1,0 +1,10 @@
+**/__pycache__
+.coverage
+.envrc
+.mypy_cache/
+.pytest_cache/
+.tox/
+coverage.xml
+dist/
+env/
+sandbox/db.sqlite3
