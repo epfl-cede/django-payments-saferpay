@@ -33,6 +33,7 @@ dependencies = [
 dev = [
   "django-stubs[compatible-mypy]",
   "flit",
+  "pre-commit",
 ]
 test = [
   "pytest",

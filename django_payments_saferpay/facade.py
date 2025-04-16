@@ -32,7 +32,9 @@ class SaferpayPaymentInitializeResponse:
     redirect_url: str
 
     @classmethod
-    def from_api_response(cls, response_data: dict) -> "SaferpayPaymentInitializeResponse":
+    def from_api_response(
+        cls, response_data: dict
+    ) -> "SaferpayPaymentInitializeResponse":
         """
         Create a SaferpayPaymentInitializeResponse from the API response dictionary.
         Validates that all required fields are present.
@@ -119,7 +121,9 @@ class SaferpayTransactionCaptureResponse:
     status: str
 
     @classmethod
-    def from_api_response(cls, response_data: dict) -> "SaferpayTransactionCaptureResponse":
+    def from_api_response(
+        cls, response_data: dict
+    ) -> "SaferpayTransactionCaptureResponse":
         """
         Create a SaferpayTransactionCaptureResponse from the API response dictionary.
         Validates that all required fields are present.
@@ -155,7 +159,9 @@ class SaferpayErrorResponse:
     code: Optional[int] = None
 
     @classmethod
-    def from_response(cls, response: Optional[requests.Response]) -> "SaferpayErrorResponse":
+    def from_response(
+        cls, response: Optional[requests.Response]
+    ) -> "SaferpayErrorResponse":
         """
         Create a SaferpayErrorResponse from an HTTP response.
 
@@ -218,7 +224,9 @@ class Facade:
 
         self.client = requests.Session()
 
-    def payment_initialize(self, payment: BasePayment, return_url: str) -> SaferpayPaymentInitializeResponse:
+    def payment_initialize(
+        self, payment: BasePayment, return_url: str
+    ) -> SaferpayPaymentInitializeResponse:
         """Create a new payment at SaferPay."""
 
         # Validate required fields
@@ -228,7 +236,9 @@ class Facade:
         request_id = self._generate_request_id()
         return self._make_api_request(
             endpoint="PaymentPage/Initialize",
-            payload=self._generate_payment_initialize_payload(payment, return_url, request_id),
+            payload=self._generate_payment_initialize_payload(
+                payment, return_url, request_id
+            ),
             request_id=request_id,
             error_message="Failed to create payment at SaferPay",
             response_class=SaferpayPaymentInitializeResponse,
@@ -260,7 +270,9 @@ class Facade:
         request_id = self._generate_request_id()
         return self._make_api_request(
             endpoint="Transaction/Capture",
-            payload=self._generate_transaction_capture_payload(payment, transaction_id, request_id),
+            payload=self._generate_transaction_capture_payload(
+                payment, transaction_id, request_id
+            ),
             request_id=request_id,
             error_message="Failed to capture transaction at SaferPay",
             response_class=SaferpayTransactionCaptureResponse,
@@ -336,7 +348,9 @@ class Facade:
                 gateway_message="Invalid JSON response",
             )
         except requests.RequestException as e:
-            raise PaymentError(_("Failed to connect to SaferPay"), gateway_message=str(e))
+            raise PaymentError(
+                _("Failed to connect to SaferPay"), gateway_message=str(e)
+            )
         except PaymentError:
             raise
 
@@ -441,7 +455,9 @@ class Facade:
     def _validate_payment_assert_fields(self, payment: BasePayment) -> None:
         """Validate that the payment has all required fields."""
         if not payment.transaction_id:
-            raise PaymentError(_("The payment has no transaction ID, but it is required"))
+            raise PaymentError(
+                _("The payment has no transaction ID, but it is required")
+            )
 
     def _validate_transaction_capture_fields(self, payment: BasePayment) -> None:
         """Validate that the payment has all required fields."""

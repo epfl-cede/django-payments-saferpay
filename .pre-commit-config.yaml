@@ -3,7 +3,7 @@
 # vim: set nospell:
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -12,9 +12,13 @@ repos:
       - id: check-added-large-files
       - id: debug-statements
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.2
+    rev: v0.11.5
     hooks:
       - id: ruff
-        args: [--fix, --exit-non-zero-on-fix]
-        exclude: docs\/.*
       - id: ruff-format
+        exclude: |
+          (?x)^(
+            sandbox\/example_app\/migrations|
+            sandbox\/example_app\/asgi.py|
+            sandbox\/example_app\/wsgi.py
+          )
