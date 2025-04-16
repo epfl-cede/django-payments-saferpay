@@ -31,6 +31,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "django-stubs[compatible-mypy]",
   "flit",
 ]
 test = [
@@ -49,11 +50,7 @@ Source = "https://github.com/epfl-cede/django-payments-saferpay"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.django_settings"
-addopts = "--cov=saferpay/ --cov-branch --cov-report=term-missing --cov-report=xml"
-
-[tool.isort]
-profile = "black"
-src_paths = ["saferpay", "tests"]
+addopts = "--cov=django_payments_saferpay/ --cov-branch --cov-report=term-missing --cov-report=xml"
 
 [tool.mypy]
 strict = true

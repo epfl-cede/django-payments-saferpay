@@ -1,14 +1,12 @@
 import logging
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
-from django.http import JsonResponse
 from django.shortcuts import redirect
-from payments import PaymentStatus, PaymentError, RedirectNeeded, get_payment_model
+from payments import PaymentError, PaymentStatus, RedirectNeeded, get_payment_model
 from payments.core import BasicProvider
 from payments.models import BasePayment
 
-from .facade import SAFER_PAY_SPEC_VERSION, Facade
-from .facade import SaferpayTransactionStatus
+from .facade import Facade, SaferpayTransactionStatus
 
 Payment = get_payment_model()
 logger = logging.getLogger(__name__)
@@ -27,9 +25,7 @@ class SaferpayProvider(BasicProvider):
         auth_username: str = kwargs.pop("auth_username")
         auth_password: str = kwargs.pop("auth_password")
         sandbox: bool = kwargs.pop("sandbox", True)
-        self.facade = Facade(
-            customer_id, terminal_id, auth_username, auth_password, sandbox
-        )
+        self.facade = Facade(customer_id, terminal_id, auth_username, auth_password, sandbox)
         super().__init__(**kwargs)
 
     @staticmethod
@@ -72,43 +68,26 @@ class SaferpayProvider(BasicProvider):
                 payment.change_status(PaymentStatus.ERROR, str(pe))
                 return redirect(payment.get_failure_url())
             else:
-                payment.attrs.saferpay_payment_assert_response = (
-                    saferpay_payment_assert_response.to_dict()
-                )
+                payment.attrs.saferpay_payment_assert_response = saferpay_payment_assert_response.to_dict()
                 payment.save()
 
-                if (
-                    saferpay_payment_assert_response.transaction_status
-                    == SaferpayTransactionStatus.CANCELED
-                ):
+                if saferpay_payment_assert_response.transaction_status == SaferpayTransactionStatus.CANCELED:
                     payment.change_status(PaymentStatus.REJECTED)
                     return redirect(payment.get_failure_url())
-                elif (
-                    saferpay_payment_assert_response.transaction_status
-                    == SaferpayTransactionStatus.CAPTURED
-                ):
+                elif saferpay_payment_assert_response.transaction_status == SaferpayTransactionStatus.CAPTURED:
                     payment.captured_amount = payment.total
                     payment.change_status(PaymentStatus.CONFIRMED)
                     return redirect(payment.get_success_url())
-                elif (
-                    saferpay_payment_assert_response.transaction_status
-                    == SaferpayTransactionStatus.AUTHORIZED
-                ):
+                elif saferpay_payment_assert_response.transaction_status == SaferpayTransactionStatus.AUTHORIZED:
                     # make transaction capture call
                     try:
-                        saferpay_transaction_capture_response = (
-                            self.facade.transaction_capture(
-                                payment, saferpay_payment_assert_response.transaction_id
-                            )
-                        )
+                        saferpay_transaction_capture_response = self.facade.transaction_capture(payment, saferpay_payment_assert_response.transaction_id)
                         logger.debug(f"{saferpay_transaction_capture_response=}")
                     except PaymentError as pe:
                         payment.change_status(PaymentStatus.ERROR, str(pe))
                         raise pe
                     else:
-                        payment.attrs.saferpay_transaction_capture_response = (
-                            saferpay_transaction_capture_response.to_dict()
-                        )
+                        payment.attrs.saferpay_transaction_capture_response = saferpay_transaction_capture_response.to_dict()
                         payment.save()
 
                         if saferpay_transaction_capture_response.status == "CAPTURED":
@@ -139,25 +118,19 @@ class SaferpayProvider(BasicProvider):
             return_url = self.get_return_url(payment)
 
             try:
-                saferpay_payment_initialize_response = self.facade.payment_initialize(
-                    payment, return_url
-                )
+                saferpay_payment_initialize_response = self.facade.payment_initialize(payment, return_url)
             except PaymentError as pe:
                 # Handle payment error
                 payment.change_status(PaymentStatus.ERROR, str(pe))
                 raise pe
             else:
                 # Update the Payment
-                payment.attrs.saferpay_payment_initialize_response = (
-                    saferpay_payment_initialize_response.to_dict()
-                )
+                payment.attrs.saferpay_payment_initialize_response = saferpay_payment_initialize_response.to_dict()
                 payment.transaction_id = saferpay_payment_initialize_response.token
                 payment.save()
 
         # Send the user to Saferpay for further payment
-        raise RedirectNeeded(
-            payment.attrs.saferpay_payment_initialize_response["redirect_url"]
-        )
+        raise RedirectNeeded(payment.attrs.saferpay_payment_initialize_response["redirect_url"])
 
     def capture(self, payment: BasePayment, amount: Optional[int] = None):
         """

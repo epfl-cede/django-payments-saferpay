@@ -1,12 +1,8 @@
 **/__pycache__
 .coverage
-.envrc
 .mypy_cache/
 .pytest_cache/
-.tox/
-coverage.xml
+.venv
 dist/
-env/
-.env
-.python-version
 sandbox/db.sqlite3
+sandbox/.envrc
