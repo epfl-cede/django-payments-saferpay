@@ -48,7 +48,7 @@ PAYMENT_VARIANTS = {
 
 ## Sandbox
 
-The project contains a sandbox that shows a very simple implementation of Django Payments with the SaferPay payment variant. You can use it to see how implementation could be done, or to actually run an application against your own Mollie account.
+The project contains a sandbox that shows a very simple implementation of Django Payments with the SaferPay payment variant. You can use it to see how implementation could be done, or to actually run an application against your own SaferPay account.
 
 ## License
 
