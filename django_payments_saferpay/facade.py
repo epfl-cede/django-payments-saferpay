@@ -3,7 +3,7 @@ import json
 import logging
 import uuid
 from dataclasses import asdict, dataclass
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import requests
 from django.utils.translation import gettext_lazy as _
@@ -11,6 +11,10 @@ from payments import PaymentError
 from payments.models import BasePayment
 
 from . import __version__ as version
+
+# Only import the type at typing time, not runtime
+if TYPE_CHECKING:
+    from .provider import SaferpayProvider
 
 SAFER_PAY_SPEC_VERSION = "1.45"
 logger = logging.getLogger(__name__)
@@ -205,19 +209,9 @@ class Facade:
 
     client: requests.Session
 
-    def __init__(
-        self,
-        customer_id: str,
-        terminal_id: str,
-        auth_username: str,
-        auth_password: str,
-        sandbox: bool,
-    ) -> None:
-        self.customer_id: str = customer_id
-        self.terminal_id: str = terminal_id
-        self.auth_username: str = auth_username
-        self.auth_password: str = auth_password
-        if sandbox:
+    def __init__(self, provider: "SaferpayProvider") -> None:
+        self.provider = provider
+        if self.provider.sandbox:
             self.base_url = "https://test.saferpay.com/api/Payment/v1"
         else:
             self.base_url = "https://www.saferpay.com/api/Payment/v1"
@@ -282,7 +276,7 @@ class Facade:
         """Return the authorization headers for API requests."""
         return {
             "User-Agent": f"Django Payments SaferPay {version}",
-            "Authorization": f"Basic {base64.b64encode(f'{self.auth_username}:{self.auth_password}'.encode()).decode()}",
+            "Authorization": f"Basic {base64.b64encode(f'{self.provider.auth_username}:{self.provider.auth_password}'.encode()).decode()}",
         }
 
     def _get_api_url(self, endpoint: str) -> str:
@@ -370,7 +364,7 @@ class Facade:
 
     def _generate_payment_request_header(self, request_id: str):
         return {
-            "CustomerId": self.customer_id,
+            "CustomerId": self.provider.customer_id,
             "RequestId": request_id,
             "RetryIndicator": 0,
             "SpecVersion": SAFER_PAY_SPEC_VERSION,
@@ -407,7 +401,7 @@ class Facade:
                 "FailNotifyUrl": payment.get_failure_url(),
                 "SuccessNotifyUrl": payment.get_success_url(),
             },
-            "TerminalId": self.terminal_id,
+            "TerminalId": self.provider.terminal_id,
         }
 
         return payload
@@ -446,18 +440,16 @@ class Facade:
         if payment.transaction_id:
             raise PaymentError(_("This payment has already been processed"))
         if not payment.currency:
-            raise PaymentError(_("The payment has no currency, but it is required"))
+            raise PaymentError(_("The payment has no required currency property"))
         if not payment.total:
-            raise PaymentError(_("The payment has no total amount, but it is required"))
+            raise PaymentError(_("The payment has no required total property"))
         if not payment.description:
-            raise PaymentError(_("The payment has no description, but it is required"))
+            raise PaymentError(_("The payment has no required description property"))
 
     def _validate_payment_assert_fields(self, payment: BasePayment) -> None:
         """Validate that the payment has all required fields."""
         if not payment.transaction_id:
-            raise PaymentError(
-                _("The payment has no transaction ID, but it is required")
-            )
+            raise PaymentError(_("The payment has no required transaction_id property"))
 
     def _validate_transaction_capture_fields(self, payment: BasePayment) -> None:
         """Validate that the payment has all required fields."""

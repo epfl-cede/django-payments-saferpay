@@ -20,14 +20,14 @@ class SaferpayProvider(BasicProvider):
     """
 
     def __init__(self, *args, **kwargs):
-        customer_id: str = kwargs.pop("customer_id")
-        terminal_id: str = kwargs.pop("terminal_id")
-        auth_username: str = kwargs.pop("auth_username")
-        auth_password: str = kwargs.pop("auth_password")
-        sandbox: bool = kwargs.pop("sandbox", True)
-        self.facade = Facade(
-            customer_id, terminal_id, auth_username, auth_password, sandbox
-        )
+        self.customer_id: str = kwargs.pop("customer_id")
+        self.terminal_id: str = kwargs.pop("terminal_id")
+        self.auth_username: str = kwargs.pop("auth_username")
+        self.auth_password: str = kwargs.pop("auth_password")
+        self.sandbox: bool = kwargs.pop("sandbox", True)
+
+        self.facade = Facade(self)
+
         super().__init__(**kwargs)
 
     @staticmethod
