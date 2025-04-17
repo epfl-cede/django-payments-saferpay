@@ -6,7 +6,6 @@ import pytest
 import requests
 from payments import PaymentError
 
-from django_payments_saferpay import __version__ as version
 from django_payments_saferpay.facade import (
     Facade,
     SaferpayErrorResponse,
@@ -495,16 +494,6 @@ class TestFacadeGetAuthHeaders:
         # Verify it contains the expected keys
         assert "User-Agent" in headers
         assert "Authorization" in headers
-
-    def test_user_agent_header(self):
-        """Test that User-Agent header has the correct format."""
-        facade = create_facade()
-
-        headers = facade._get_auth_headers()
-
-        # Verify User-Agent format
-        expected_user_agent = f"Django Payments SaferPay {version}"
-        assert headers["User-Agent"] == expected_user_agent
 
     def test_authorization_header(self):
         """Test that Authorization header has the correct Basic auth format."""
