@@ -1,0 +1,15 @@
+include LICENSE
+include README.md
+include pyproject.toml
+
+recursive-include src/django_payments_saferpay *.py
+recursive-include src/django_payments_saferpay/templates *.html
+recursive-include src/django_payments_saferpay/static *
+
+# Explicitly exclude test and sandbox files
+global-exclude *test*.py
+global-exclude *sandbox*.py
+prune tests
+prune sandbox
+prune src/django_payments_saferpay/tests
+prune src/django_payments_saferpay/sandbox
