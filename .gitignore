@@ -1,8 +1,12 @@
 **/__pycache__
+*.egg
+*.egg-info/
 .coverage
 .mypy_cache/
 .pytest_cache/
+.ruff_cache/
+.tox
 .venv
-dist/
-sandbox/db.sqlite3
+build/
 sandbox/.envrc
+sandbox/db.sqlite3

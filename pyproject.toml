@@ -8,7 +8,7 @@ description = "SaferPay integration for django-payments"
 version = "0.1.0"
 readme = "README.md"
 requires-python = ">=3.9"
-license = { file = "LICENSE" }
+license-files = ["LICENSE"]
 keywords = ["django", "payments", "saferpay"]
 authors = [
   { name = "EPFL CEDE", email = "oleg.demakov@epfl.ch" },
@@ -35,6 +35,7 @@ dependencies = [
 dev = [
   "django-stubs[compatible-mypy]",
   "mock",
+  "pre-commit",
   "pytest",
   "pytest-django",
   "pytest-mock",
@@ -46,8 +47,12 @@ Documentation = "https://github.com/epfl-cede/django-payments-saferpay#readme"
 Issues = "https://github.com/epfl-cede/django-payments-saferpay/issues"
 Source = "https://github.com/epfl-cede/django-payments-saferpay"
 
+[tool.setuptools.packages]
+find = {where = ["src"]}
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "tests.django_settings"
+pythonpath = ["src"]
 
 [tool.ruff]
 target-version = "py39"
@@ -56,7 +61,7 @@ target-version = "py39"
 strict = true
 
 [tool.setuptools_scm]
-write_to = "django_payments_saferpay/version.py"
+write_to = "src/django_payments_saferpay/version.py"
 version_scheme = "post-release"
 
 [[tool.mypy.overrides]]
