@@ -10,3 +10,4 @@
 build/
 sandbox/.envrc
 sandbox/db.sqlite3
+src/django_payments_saferpay/version.py

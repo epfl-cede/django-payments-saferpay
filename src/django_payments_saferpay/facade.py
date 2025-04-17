@@ -10,7 +10,11 @@ from django.utils.translation import gettext_lazy as _
 from payments import PaymentError
 from payments.models import BasePayment
 
-from . import __version__ as version
+# version.py file generated during build thus may not exists
+try:
+    from .version import __version__
+except ImportError:
+    __version__ = "0.0.0.dev0"
 
 # Only import the type at typing time, not runtime
 if TYPE_CHECKING:
@@ -275,7 +279,7 @@ class Facade:
     def _get_auth_headers(self) -> Dict[str, str]:
         """Return the authorization headers for API requests."""
         return {
-            "User-Agent": f"Django Payments SaferPay {version}",
+            "User-Agent": f"Django Payments SaferPay {__version__}",
             "Authorization": f"Basic {base64.b64encode(f'{self.provider.auth_username}:{self.provider.auth_password}'.encode()).decode()}",
         }
 
