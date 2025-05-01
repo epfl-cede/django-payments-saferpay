@@ -119,6 +119,7 @@ The project includes a sandbox application that demonstrates a simple implementa
 For more detailed information, refer to:
 - [Django Payments Documentation](https://django-payments.readthedocs.io/)
 - [Saferpay API Documentation](https://docs.saferpay.com/home)
+- [Saferpay API Reference](https://saferpay.github.io/jsonapi/index.html)
 
 ## Contributing
 
