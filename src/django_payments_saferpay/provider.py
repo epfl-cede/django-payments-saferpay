@@ -86,6 +86,9 @@ class SaferpayProvider(BasicProvider):
                     == SaferpayTransactionStatus.CAPTURED
                 ):
                     payment.captured_amount = payment.total
+                    type(payment).objects.filter(pk=payment.pk).update(
+                        captured_amount=payment.captured_amount
+                    )
                     payment.change_status(PaymentStatus.CONFIRMED)
                     return redirect(payment.get_success_url())
                 elif (
@@ -111,6 +114,9 @@ class SaferpayProvider(BasicProvider):
 
                         if saferpay_transaction_capture_response.status == "CAPTURED":
                             payment.captured_amount = payment.total
+                            type(payment).objects.filter(pk=payment.pk).update(
+                                captured_amount=payment.captured_amount
+                            )
                             payment.change_status(PaymentStatus.CONFIRMED)
                         return redirect(payment.get_success_url())
 

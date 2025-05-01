@@ -24,7 +24,7 @@ def payment_success(request, token):
     payment = get_object_or_404(Payment, token=token)
 
     return HttpResponse(
-        content=f"Payment success, {payment.total=}, {payment.status=}, {payment.message=}".encode(),  # noqa: E501
+        content=f"Payment success, {payment.total=}, {payment.captured_amount=}, {payment.status=}, {payment.message=}".encode(),  # noqa: E501
     )
 
 

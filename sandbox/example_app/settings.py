@@ -26,7 +26,7 @@ SECRET_KEY = "not-really"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost:8000"]
+ALLOWED_HOSTS = ["localhost"]
 
 
 # Application definition
